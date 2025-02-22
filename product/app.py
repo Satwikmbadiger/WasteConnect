@@ -223,16 +223,22 @@ def add_product():
 
 
 @app.route('/admin-dashboard')
-@auth_required
 def admin_dashboard():
-    # Get the list of products from Firestore
-    products_ref = db.collection('products')
-    products = products_ref.stream()
+    try:
+        # Fetch all products from Firestore
+        products_ref = db.collection('products')
+        products = products_ref.stream()
+        product_list = []
+        for product in products:
+            product_dict = product.to_dict()
+            product_dict['id'] = product.id  # Add the product ID to the data
+            product_list.append(product_dict)
 
-    # Convert Firestore results to a list
-    product_list = [product.to_dict() for product in products]
+        return render_template('admin_dashboard.html', products=product_list)
+    except Exception as e:
+        flash(f"Error fetching products: {e}", "error")
+        return render_template('admin_dashboard.html', products=[])
 
-    return render_template('admin_dashboard.html', products=product_list)
 
 @app.route('/cart')
 @auth_required
@@ -300,6 +306,74 @@ def checkout():
     total_price = sum(item['price'] * item['quantity'] for item in cart_items)
 
     return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+
+@app.route('/edit-product/<product_id>', methods=['GET', 'POST'])
+@auth_required
+def edit_product(product_id):
+    try:
+        # Fetch the product from Firestore
+        product_ref = db.collection('products').document(product_id)
+        product = product_ref.get()
+
+        # Check if product exists
+        if not product.exists:
+            flash("Product not found", "error")
+            return redirect(url_for('admin_dashboard'))  # Redirect to admin dashboard if product is not found
+
+        product_data = product.to_dict()
+
+        if request.method == 'POST':
+            # Get data from the form
+            name = request.form.get('name')
+            description = request.form.get('description')
+            price = request.form.get('price')
+            image_url = request.form.get('image_url')
+            category = request.form.get('category')
+
+            # Validate price
+            try:
+                price = float(price)  # Convert price to float
+                if price <= 0:
+                    flash("Price must be a positive number", "error")
+                    return render_template('edit_product.html', product=product_data)
+            except ValueError:
+                flash("Invalid price. Please enter a valid number", "error")
+                return render_template('edit_product.html', product=product_data)
+
+            # Update the product data in Firestore
+            product_data = {
+                'name': name,
+                'description': description,
+                'price': price,
+                'image_url': image_url,
+                'category': category,
+            }
+
+            product_ref.update(product_data)
+            flash("Product updated successfully", "success")
+            return redirect(url_for('admin_dashboard'))  # Redirect to the admin dashboard after editing
+
+        # Display the edit form pre-filled with current product data
+        return render_template('edit_product.html', product=product_data, product_id=product_id)
+
+    except Exception as e:
+        flash(f"An error occurred: {e}", "error")
+        return redirect(url_for('admin_dashboard'))
+
+@app.route('/delete-product/<product_id>', methods=['GET','POST'])
+@auth_required
+def delete_product(product_id):
+    # Fetch the product from Firestore
+    product_ref = db.collection('products').document(product_id)
+    product = product_ref.get() 
+
+    if not product.exists:
+        return "Product not found", 404
+
+    # Delete the product from Firestore
+    product_ref.delete()
+
+    return redirect(url_for('admin_dashboard'))  # Redirect to admin dashboard after deletion
 
 if __name__ == '__main__':
     app.run(debug=True)
