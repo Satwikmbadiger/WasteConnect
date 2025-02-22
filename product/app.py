@@ -184,7 +184,54 @@ def not_found(error):
 @app.route('/dashboard')
 @auth_required
 def dashboard():
-    return render_template('dashboard.html')
+    user = session.get('user', {})
+    user_id = user.get('uid')
+    
+    # Fetch user data from Firestore
+    user_ref = db.collection('users').document(user_id)
+    user_doc = user_ref.get()
+    
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+    else:
+        user_data = {}
+    
+    # Fetch user's orders from Firestore without ordering
+    orders_ref = db.collection('orders').where('user_id', '==', user_id)
+    orders = orders_ref.stream()
+
+    # Convert to list, and then sort by timestamp manually
+    order_list = [order.to_dict() for order in orders]
+    order_list.sort(key=lambda x: x['timestamp'], reverse=True)  # Sort by timestamp in descending order
+
+    # Limit to the most recent 3 orders (you can adjust the limit)
+    recent_orders = order_list[:3]
+    
+    return render_template('dashboard.html', user=user_data, recent_orders=recent_orders)
+
+    user = session.get('user', {})
+    user_id = user.get('uid')
+    
+    # Fetch user data from Firestore
+    user_ref = db.collection('users').document(user_id)
+    user_doc = user_ref.get()
+    
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+    else:
+        user_data = {}
+    
+    # Fetch the user's orders from Firestore (optional: show recent orders)
+    orders_ref = db.collection('orders').where('user_id', '==', user_id).order_by('timestamp', direction=firestore.Query.DESCENDING).limit(3)
+    orders = orders_ref.stream()
+    
+    order_list = []
+    for order in orders:
+        order_data = order.to_dict()
+        order_data['id'] = order.id
+        order_list.append(order_data)
+    
+    return render_template('dashboard.html', user=user_data, recent_orders=order_list)
 
 @app.route('/profile')
 @auth_required
@@ -246,55 +293,106 @@ def update_profile():
 @auth_required
 def order_history():
     user_id = session['user']['uid']  # Get the authenticated user's ID
-    
-    # Fetch the user's orders from Firestore (no ordering yet)
+
+    # Fetch the user's orders from Firestore without ordering
     orders_ref = db.collection('orders').where('user_id', '==', user_id)
     orders = orders_ref.stream()
-    
+
     # Convert Firestore results to a list of dictionaries
     order_list = []
     for order in orders:
         order_data = order.to_dict()
         order_data['id'] = order.id  # Add Firestore document ID
         order_list.append(order_data)
-    
-    # Sort the orders by timestamp in Python (in case you want descending order)
-    order_list.sort(key=lambda x: x['timestamp'], reverse=True)
-    
+
     return render_template('order_history.html', orders=order_list)
+
+@app.route('/order/<order_id>')
+@auth_required
+def order_detail(order_id):
+    user_id = session['user']['uid']  # Get the authenticated user's ID
+    
+    # Fetch the order from Firestore
+    order_ref = db.collection('orders').document(order_id)
+    order = order_ref.get()
+
+    if not order.exists:
+        return "Order not found", 404
+
+    order_data = order.to_dict()
+    
+    # Ensure the order belongs to the logged-in user
+    if order_data['user_id'] != user_id:
+        return "Unauthorized", 403
+
+    return render_template('order_detail.html', order=order_data)
 
 @app.route('/create-checkout-session', methods=['GET', 'POST'])
 @auth_required
 def create_checkout_session():
-
     try:
+        # Retrieve the cart from session
+        cart_items = session.get('cart', [])
+        
+        # Prepare the line_items for Stripe (dynamically based on cart content)
+        line_items = []
+        for item in cart_items:
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': item['name'],
+                    },
+                    'unit_amount': int(item['price'] * 100),  # Stripe requires amount in cents
+                },
+                'quantity': item['quantity'],
+            })
+
+        # Create the Checkout session
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
-            line_items=[
-                {
-                    'price' : "price_1QvA4iBZTAUNX1U8pYpvMm1F",
-                    'quantity': 1,
-                }
-            ],
-            mode = 'subscription',
+            line_items=line_items,
+            mode='payment',
             success_url=YOUR_DOMAIN + '/success',
             cancel_url=YOUR_DOMAIN + '/cancel',
         )
 
+        return redirect(checkout_session.url, 303)
+
     except Exception as e:
         return str(e)
-
-    return redirect(checkout_session.url, 303)
 
 @app.route('/success')
 @auth_required
 def payment_success():
-    session.pop('cart', None)  # Clear the cart
-    return render_template('success.html')
+    # Retrieve cart data from the session
+    cart_items = session.get('cart', [])
+    total_price = sum(item['price'] * item['quantity'] for item in cart_items)
+
+    # Get the user ID from the session
+    user_id = session['user']['uid']
+
+    # Save the order to Firestore
+    order_ref = db.collection('orders').add({
+        'user_id': user_id,
+        'items': cart_items,
+        'total_price': total_price,
+        'status': 'completed',  # Mark order as completed
+        'timestamp': firestore.SERVER_TIMESTAMP  # Timestamp for sorting
+    })
+
+    # Clear the cart after successful payment
+    session.pop('cart', None)
+    
+    flash("Payment successful! Your order has been placed.", "success")
+    
+    # Render the success page with cart items and total price
+    return render_template('success.html', cart_items=cart_items, total_price=total_price)
 
 @app.route('/cancel')
 @auth_required
 def payment_cancel():
+    flash("Payment was canceled. Please try again.", "error")
     return render_template('cancel.html')
 
 
