@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, make_response, session, abort, jsonify, url_for
+from flask import Flask, redirect, render_template, request, make_response, session, abort, jsonify, url_for, flash 
 import secrets
 from functools import wraps
 import firebase_admin
@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 import stripe
 
 load_dotenv()
-
-
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
@@ -48,10 +46,16 @@ def auth_required(f):
         if 'user' not in session:
             return redirect(url_for('login'))
         
-        else:
-            return f(*args, **kwargs)
+        # Check if user has the required role (e.g., admin)
+        user_role = session.get('role', 'user')  # Default to 'user' if no role found
+        if f.__name__ in ['admin_dashboard', 'add_product', 'edit_product', 'delete_product'] and user_role != 'admin':
+            flash("You do not have permission to access this page.", "error")
+            return redirect(url_for('dashboard'))  # Or you could show an access denied page
         
+        return f(*args, **kwargs)
+    
     return decorated_function
+
 
 
 @app.route('/auth', methods=['POST'])
@@ -63,11 +67,29 @@ def authorize():
     token = token[7:]  # Strip off 'Bearer ' to get the actual token
 
     try:
-        decoded_token = auth.verify_id_token(token, check_revoked=True, clock_skew_seconds=60) # Validate token here
-        session['user'] = decoded_token # Add user to session
-        return redirect(url_for('dashboard'))
-    
-    except:
+        decoded_token = auth.verify_id_token(token, check_revoked=True, clock_skew_seconds=60)  # Validate token
+        session['user'] = decoded_token  # Store the decoded token in the session
+        
+        user_id = decoded_token['uid']  # Get the Firebase UID
+
+        # Check Firestore for the user's role
+        user_ref = db.collection('users').document(user_id)
+        user_doc = user_ref.get()
+
+        # If user does not exist, set default role
+        if not user_doc.exists:
+            user_ref.set({
+                'email': decoded_token['email'],
+                'role': 'user'  # Default role as 'user'
+            })
+            session['role'] = 'user'  # Default to 'user' if no role set
+        else:
+            user_data = user_doc.to_dict()
+            session['role'] = user_data.get('role', 'user')  # Assign role from Firestore
+
+        return redirect(url_for('dashboard'))  # Redirect to the dashboard
+
+    except Exception as e:
         return "Unauthorized", 401
 
 
@@ -111,9 +133,14 @@ def privacy():
 @app.route('/logout')
 def logout():
     session.pop('user', None)  # Remove the user from session
+    session.pop('role', None)  # Remove role from session
     response = make_response(redirect(url_for('login')))
     response.set_cookie('session', '', expires=0)  # Optionally clear the session cookie
     return response
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/products')
 def products():
@@ -157,8 +184,84 @@ def not_found(error):
 @app.route('/dashboard')
 @auth_required
 def dashboard():
-
     return render_template('dashboard.html')
+
+@app.route('/profile')
+@auth_required
+def profile():
+    user = session.get('user', {})
+    user_id = user.get('uid')
+    
+    # Fetch user data from Firestore
+    user_ref = db.collection('users').document(user_id)
+    user_doc = user_ref.get()
+    
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+    else:
+        user_data = {}
+    
+    return render_template('profile.html', user=user_data)
+
+@app.route('/update-profile', methods=['GET', 'POST'])
+@auth_required
+def update_profile():
+    user = session.get('user', {})
+    user_id = user.get('uid')
+    
+    # Fetch user data from Firestore
+    user_ref = db.collection('users').document(user_id)
+    user_doc = user_ref.get()
+    
+    if user_doc.exists:
+        user_data = user_doc.to_dict()
+    else:
+        user_data = {}
+    
+    if request.method == 'POST':
+        # Handle form submission to update the profile
+        username = request.form.get('username')
+        dob = request.form.get('dob')
+        location = request.form.get('location')
+        
+        # Update Firestore with the new information
+        user_ref.update({
+            'username': username,
+            'dob': dob,
+            'location': location,
+        })
+        
+        # Update session with the new data (optional, if you want session to reflect the changes immediately)
+        session['user']['username'] = username
+        session['user']['dob'] = dob
+        session['user']['location'] = location
+        
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for('profile'))  # Redirect to the profile page after updating
+    
+    # If it's a GET request, render the profile update form with the current user data
+    return render_template('update_profile.html', user=user_data)
+
+@app.route('/order-history')
+@auth_required
+def order_history():
+    user_id = session['user']['uid']  # Get the authenticated user's ID
+    
+    # Fetch the user's orders from Firestore (no ordering yet)
+    orders_ref = db.collection('orders').where('user_id', '==', user_id)
+    orders = orders_ref.stream()
+    
+    # Convert Firestore results to a list of dictionaries
+    order_list = []
+    for order in orders:
+        order_data = order.to_dict()
+        order_data['id'] = order.id  # Add Firestore document ID
+        order_list.append(order_data)
+    
+    # Sort the orders by timestamp in Python (in case you want descending order)
+    order_list.sort(key=lambda x: x['timestamp'], reverse=True)
+    
+    return render_template('order_history.html', orders=order_list)
 
 @app.route('/create-checkout-session', methods=['GET', 'POST'])
 @auth_required
@@ -224,6 +327,10 @@ def add_product():
 
 @app.route('/admin-dashboard')
 def admin_dashboard():
+    if session.get('role') != 'admin':
+        flash("You do not have permission to access this page.", "error")
+        return redirect(url_for('dashboard')) 
+
     try:
         # Fetch all products from Firestore
         products_ref = db.collection('products')
@@ -297,15 +404,21 @@ def remove_from_cart(product_id):
 
     return redirect(url_for('cart'))
 
-@app.route('/checkout')
+@app.route('/checkout', methods=['GET', 'POST'])
 @auth_required
 def checkout():
-    cart_items = session.get('cart', [])
-    
-    # Calculate total price
-    total_price = sum(item['price'] * item['quantity'] for item in cart_items)
+    if request.method == 'GET':
+        # Display the checkout page with cart items and total price
+        cart_items = session.get('cart', [])
+        
+        # Calculate total price
+        total_price = sum(item['price'] * item['quantity'] for item in cart_items)
 
-    return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+        return render_template('checkout.html', cart_items=cart_items, total_price=total_price)
+    
+    elif request.method == 'POST':
+        # Redirect to create checkout session when user submits the checkout form
+        return redirect(url_for('create_checkout_session'))  # This will trigger the create-checkout-session route
 
 @app.route('/edit-product/<product_id>', methods=['GET', 'POST'])
 @auth_required

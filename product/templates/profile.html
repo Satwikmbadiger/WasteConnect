@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" >
+    <title>Profile</title>
+</head>
+<body>
+    {% include 'navbar_private.html' %}
+    <h1>Profile</h1>
+    <p>Welcome to your profile page!</p>
+    <p>Here you can view and edit your profile information.</p>
+    <p>For example, you can change your username, email, or password.</p>
+    <p>Feel free to explore and update your profile as needed.</p>
+
+    
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Username:</strong> {{ user.get('username', 'N/A') }}</p>
+    <p><strong>Date of Birth:</strong> {{ user.get('dob', 'N/A') }}</p>
+    <p><strong>Location:</strong> {{ user.get('location', 'N/A') }}</p>
+
+    <a href="{{ url_for('update_profile') }}">Edit Profile</a>
+    <a href="{{ url_for('order_history') }}">Order History</a>
+    {% include 'footer.html' %}
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+</body>
+</html>

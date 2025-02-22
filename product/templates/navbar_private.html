@@ -11,19 +11,21 @@
         <a href="{{ url_for('cart') }}">Cart</a>
         <a href="{{ url_for('checkout') }}">Checkout</a>
         
-        <div class="dropdown">
-            <a class="dropbtn" id="dropBtn">Admin</a>
-            <div class="dropdown-content">
-                <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
-                <a href="{{ url_for('add_product') }}">Add Product</a>
+        {% if session.get('role') == 'admin' %}
+            <div class="dropdown">
+                <a class="dropbtn" id="dropBtn">Admin</a>
+                <div class="dropdown-content">
+                        <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                        <a href="{{ url_for('add_product') }}">Add Product</a>
+                </div>
             </div>
-        </div>
+        {% endif %}
 
         <div class="dropdown">
             <a class="dropbtn" id="dropBtn">Account</a>
             <div class="dropdown-content">
-                <a href="#profile">Profile</a>
-                <a href="#settings">Settings</a>
+                <a href="{{ url_for('profile')}}">Profile</a>
+                <a href="{{ url_for('order_history')}}">Orders</a>
                 <a id="sign-out-btn" href="{{ url_for('logout') }}">Logout</a>
             </div>
         </div>
