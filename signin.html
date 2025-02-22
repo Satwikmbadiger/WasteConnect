@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="signin-container">
+        <div class="left-box"></div> 
+        <div class="signin-box">
+            <div class="signin-header">
+                <button class="active">Sign in</button>
+                <button>Sign up</button>
+            </div>
+            <form>
+                <label>Email id</label>
+                <input type="email" id="email">
+                
+                <label>Password</label>
+                <input type="password" id="password">
+                
+                <div class="remember-forgot">
+                    <input type="checkbox" id="remember"> <label for="remember">Remember me</label>
+                    <a href="#">Forgot?</a>
+                </div>
+                
+                <button type="button" onclick="signIn()">Sign in</button>
+                
+                <div class="or-divider">or</div>
+                
+                <button>Sign in with Google</button>
+            </form>
+            
+            <p>Don't have an account? <a href="#">Create one</a></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
