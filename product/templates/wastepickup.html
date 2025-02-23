@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Connect | Schedule Pickup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900 font-[Poppins]">
+
+    <!-- 🌟 Navbar -->
+    <nav class="bg-white shadow-md py-4 px-10 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <img src="https://placehold.co/40x40" alt="Waste Connect Logo" class="h-10">
+            <span class="text-xl font-semibold text-gray-800">Waste Connect</span>
+        </div>
+        <div class="space-x-6 text-lg text-gray-700">
+            <a href="#" class="hover:text-green-600">Home</a>
+            <a href="#" class="hover:text-green-600">Pickup</a>
+            <a href="#" class="hover:text-green-600">Rewards</a>
+        </div>
+    </nav>
+
+    <!-- 🚛 Waste Pickup Section -->
+    <section class="w-4/5 mx-auto mt-10 bg-white shadow-lg rounded-lg p-8 flex items-center">
+        
+        <!-- 📝 Form Section -->
+        <div class="w-1/2 pr-8">
+            <h1 class="text-3xl font-bold text-gray-900">♻️ Schedule Your Waste Pickup</h1>
+            <p class="text-gray-600 mt-2">Easily request a waste pickup and help keep the environment clean.</p>
+
+            <form class="mt-6">
+                <label class="block text-lg font-medium">📅 Select Pickup Date</label>
+                <input type="date" id="pickupDate" class="mt-2 w-full p-3 border rounded-md" required>
+
+                <label class="block text-lg font-medium mt-4">📍 Your Address</label>
+                <input type="text" id="userAddress" class="mt-2 w-full p-3 border rounded-md" placeholder="Fetching your location..." readonly>
+
+                <button type="submit" class="mt-6 bg-green-700 text-white px-6 py-3 rounded-md text-lg font-semibold shadow-md hover:bg-green-800 w-full">
+                    Confirm Pickup
+                </button>
+            </form>
+        </div>
+
+        <!-- 🌱 Image Section -->
+        <div class="w-1/2">
+            <img src="https://placehold.co/500x350?text=Waste+Pickup" alt="Waste Pickup Image" class="w-full rounded-md">
+        </div>
+
+    </section>
+
+    <!-- 📢 Call to Action -->
+    <section class="w-4/5 mx-auto text-center my-10">
+        <h2 class="text-2xl font-bold text-gray-900">Join the Movement! 🌍</h2>
+        <p class="text-gray-600 mt-2">Be a part of the waste recycling revolution. Schedule your pickup today!</p>
+        <button class="mt-4 bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-700">
+            Learn More
+        </button>
+    </section>
+
+    <!-- 🔗 Footer -->
+    <footer class="bg-gray-900 text-white py-6 text-center">
+        <p>&copy; 2025 Waste Connect. All Rights Reserved.</p>
+    </footer>
+
+    <!-- 📍 Auto Fetch Address Script -->
+    <script>
+        function fetchAddress() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("userAddress").value = data.display_name;
+                        })
+                        .catch(() => {
+                            document.getElementById("userAddress").value = "Could not fetch location.";
+                        });
+                });
+            } else {
+                document.getElementById("userAddress").value = "Geolocation not supported.";
+            }
+        }
+
+        window.onload = fetchAddress;
+    </script>
+
+</body>
+</html>
