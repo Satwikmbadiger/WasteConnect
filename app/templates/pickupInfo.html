@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collector Dashboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Collector Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>User ID</th>
+                <th>Pickup Date</th>
+                <th>Admin ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in  data %}
+            <tr>
+                <td>{{ schedule.timestamp }}</td>
+                <td>{{ schedule.userid }}</td>
+                <td>{{ schedule.pickupdate }}</td>
+                <td>{{ schedule.admin_id }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
