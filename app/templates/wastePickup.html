@@ -11,7 +11,6 @@
         <label for="pickupDate">Select Pickup Date:</label>
         <input type="date" id="pickupDate" name="pickupDate" required>
         <button type="button" onclick="submitRequest()" id="submitButton">Request Pickup</button>
-        <button type="button" onclick="viewSchedule()">View Schedule</button>
         <div id="loading" style="display: none;">Loading...</div>
     </form>
 
@@ -65,9 +64,7 @@
             });
         }
 
-        function viewSchedule() {
-            window.location.href = '/workpickup/getSchedule';
-        }
+        
     </script>
 </body>
 </html>

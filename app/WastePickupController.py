@@ -49,7 +49,11 @@ def add_schedule_route():
         
         success = pk.add_schedule(data, user)
         if success:
+            
+            
             return jsonify({"message": "Schedule added successfully"}), 200
+        
+        
         return jsonify({"error": "Failed to add schedule"}), 500
         
     except Exception as e:
