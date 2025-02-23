@@ -187,10 +187,6 @@ input, button {
 
 
 
-  
-
-
-
 /* Auth page styles - Login, Signup, Forgot Password */
 
 .auth-page_container {
@@ -615,3 +611,82 @@ footer {
         left: 0;
     }
 }
+
+
+
+
+
+
+
+
+/* home page  */
+
+/* === hero section === */
+/* === hero section === */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4rem 5%;
+    background-color: var(--secondary-light-color);
+}
+
+.hero-text {
+    max-width: 50%;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: var(--grey-color);
+    margin-bottom: 2rem;
+}
+
+.hero .cta-btn {
+    background-color: var(--primary-light-color);
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--dark-color);
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.hero .cta-btn:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.hero-image {
+    max-width: 45%;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+}
+
+/* === responsive design === */
+@media screen and (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-text {
+        max-width: 100%;
+    }
+
+    .hero-image {
+        max-width: 80%;
+        margin-top: 2rem;
+    }
+}
+    

@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" >
@@ -13,7 +15,7 @@
 
   </head>
 
-  <body>
+  <!-- <body>
 
     {% include 'navbar_public.html' %}
 
@@ -31,6 +33,39 @@
 
 
     <script src="{{ url_for('static', filename='scripts.js') }}" type="module"></script>
-  </body>
+  </body> -->
+
+
+
+  
+
+<!-- Hero Section -->
+ <!-- Hero Section -->
+ <section class="w-4/5 mx-auto flex justify-between items-center py-16">
+  <!-- Left Content -->
+  <div class="w-[48%]">
+      <p class="text-sm text-green-600 font-semibold">Top 1 in sustainable development</p>
+      <h1 class="text-5xl font-bold mt-2 leading-tight">
+          Lorem ipsum dolor sit amet et delectus accommodare his
+      </h1>
+      <p class="text-gray-600 mt-4 text-lg">
+          Lorem ipsum dolor sit amet et delectus accommodare his consul copiosae legendos at vix ad 
+          putent delectus delicata usu. Vidit dissentiunt eos cu eum an.
+      </p>
+      <button class="mt-6 bg-green-700 text-white px-6 py-3 rounded-md hover:bg-green-800">
+          Explore
+      </button>
+  </div>
+  <!-- Right Image -->
+  <div class="w-[48%] flex justify-end">
+      <img src="{{ url_for('static', filename='images/earth.png') }}" 
+           alt="Globe with green recycling arrows" 
+           class="w-[400px]">
+  </div>
+</section>
+
+
+
+</body>
 
 </html>
