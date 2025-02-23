@@ -1,5 +1,5 @@
 from flask import Flask
-from app.config import cred
+from wastePickup.config import cred
 
 def create_app():
     app=Flask(__name__)

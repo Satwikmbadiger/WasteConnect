@@ -1,5 +1,5 @@
-from app.Service import PickupService as pk
-from app.Service import userService as us
+from wastePickup.Service import PickupService as pk
+from wastePickup.Service import userService as us
 
 from flask import render_template, request, jsonify,Blueprint
 

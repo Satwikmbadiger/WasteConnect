@@ -1,6 +1,6 @@
 import firebase_admin
 from firebase_admin import credentials, auth,firestore
-from app.config import cred
+from wastePickup.config import cred
 
 db = firestore.client()
 
