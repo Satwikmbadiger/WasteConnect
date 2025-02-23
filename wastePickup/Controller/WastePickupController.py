@@ -57,9 +57,9 @@ def add_schedule_route():
         if isinstance(success, tuple):
             return jsonify(success[0]), success[1]
         
-        check_rew = us.check_rewards(user)
-        if isinstance(check_rew, tuple):
-            return jsonify(check_rew[0]), check_rew[1]
+        #check_rew = us.check_rewards(user)
+        # if isinstance(check_rew, tuple):
+        #     return jsonify(check_rew[0]), check_rew[1]
         
         return jsonify({
             "message": "Pickup scheduled successfully!",
@@ -68,6 +68,8 @@ def add_schedule_route():
        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
     
 # @waste_pickup.route('/getAllocatedSchedule/<user_id>', methods=['GET'])
 # def get_Allocated_Schedule(user_id):
