@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" >
@@ -12,13 +11,11 @@
   <title>Flask Template</title>
 
 
-  </head>
-
-  <body>
-
+</head>
+<body>
     {% include 'navbar_private.html' %}
 
-    <!-- <main>
+    <main>
 
       <h1>Dashboard (Protected Page)</h1>
 
@@ -26,86 +23,11 @@
 
       <p>Use this template to create and customize more protected pages for your app.</p>
 
-    </main> -->
-
-
-     <!-- Dashboard Section -->
-     <section class="w-4/5 mx-auto flex gap-8 py-8">
-      <!-- Left Profile Section -->
-      <div class="w-[30%] bg-gray-100 p-6 rounded-lg">
-          <div class="flex justify-center mb-4">
-              <img src="https://placehold.co/80x80" alt="User Profile Picture" class="rounded-full">
-          </div>
-          <div>
-              <p class="text-lg font-semibold"><span class="font-bold">Name</span> Samuel Wilson</p>
-              <p class="text-lg font-semibold mt-2"><span class="font-bold">Date of Birth</span> April 11, 1985</p>
-              <p class="text-lg font-semibold mt-2"><span class="font-bold">Gender</span></p>
-              <p class="text-lg font-semibold mt-2"><span class="font-bold">Address</span></p>
-              <p class="text-lg font-semibold mt-2"><span class="font-bold">Phone Number</span></p>
-              <p class="text-lg font-semibold mt-2"><span class="font-bold">Email:</span></p>
-              <p class="text-lg font-semibold mt-2 text-green-700"><span class="font-bold">Rewards</span></p>
-              <p class="text-lg font-semibold mt-2"><span class="font-bold">Last pick up date</span></p>
-              <p class="text-lg font-semibold mt-2"><span class="font-bold">Next pick up date</span></p>
-          </div>
-      </div>
-
-      <!-- Right Content -->
-      <div class="w-[70%]">
-          <!-- Stats Section -->
-          <div class="flex gap-6">
-              <!-- Profile Completion Card -->
-              <div class="w-1/2 border border-gray-300 p-4 rounded-lg flex items-center">
-                  <div class="bg-gray-200 w-12 h-12 flex items-center justify-center rounded-full">
-                      <i class="fas fa-user text-gray-700 text-xl"></i>
-                  </div>
-                  <div class="ml-4">
-                      <p class="text-2xl font-bold text-green-700">37%</p>
-                      <p class="text-gray-600 text-sm">of the profile is filled out</p>
-                  </div>
-              </div>
-              <!-- Reward Points Card -->
-              <div class="w-1/2 border border-gray-300 p-4 rounded-lg">
-                  <p class="text-lg font-semibold">Your Reward points</p>
-                  <p class="text-green-700 text-2xl font-bold">2348</p>
-                  <button class="mt-2 bg-green-700 text-white px-4 py-2 rounded-md text-sm hover:bg-green-800">
-                      Redeem points
-                  </button>
-              </div>
-          </div>
-
-          <!-- Contribution Section -->
-          <div class="mt-6">
-              <p class="text-lg font-semibold">contribute</p>
-              <div class="bg-green-800 text-white p-6 rounded-lg flex items-center">
-                  <div class="w-3/4">
-                      <p class="text-sm">of the profile is filled out</p>
-                      <h2 class="text-2xl font-semibold mt-2 leading-tight">
-                          Lorem ipsum dolor sit amet et delectus accommodare his
-                      </h2>
-                  </div>
-                  <div class="w-1/4 flex justify-center">
-                      <img src="https://placehold.co/80x80" alt="Hands holding a green plant" class="w-20">
-                  </div>
-              </div>
-          </div>
-
-          <!-- Previous Orders Section -->
-          <div class="mt-6">
-              <p class="text-lg font-semibold">previous orders</p>
-              <div class="mt-2">
-                  <div class="w-full h-10 bg-gray-300 rounded-md mb-2"></div>
-                  <div class="w-full h-10 bg-gray-300 rounded-md"></div>
-              </div>
-          </div>
-      </div>
-  </section>
+    </main>
 
     <script src="{{ url_for('static', filename='login-auth.js') }}" type="module"></script>
     <script src="{{ url_for('static', filename='scripts.js') }}" type="module"></script>
 
     {% include 'footer.html' %}
-
-  </body>
-  
-
+</body>
 </html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <title>Order History</title>
+</head>
+<body>
+    {% include 'navbar_private.html' %}
+    <h2>Your Order History</h2>
+
+    {% if orders %}
+        <ul>
+            {% for order in orders %}
+                <li>
+                    <strong>Order ID:</strong> {{ order.id }}<br>
+                    <strong>Total Price:</strong> ${{ order.total_price }}<br>
+                    <strong>Status:</strong> {{ order.order_status }}<br>
+                    <strong>Date:</strong> {{ order.timestamp.strftime('%B %d, %Y') }}<br>
+                    <!-- Add any other order details you want to display -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No orders found.</p>
+    {% endif %}
+    {% include 'footer.html' %}
+</body>
+</html>
