@@ -26,7 +26,7 @@ def get_waste_pickup(pickup_id):
     
 # @waste_pickup.route('/pickupForm')
 # def pickup_form():
-#     return render_template('wastePickup.html')
+#     return render_template('pickupinfo.html')
 
 @waste_pickup.route('/addSchedule', methods=['POST'])
 def add_schedule_route():

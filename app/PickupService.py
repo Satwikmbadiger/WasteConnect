@@ -7,7 +7,7 @@ from app.config import cred
 db = firestore.client()
 def add_schedule(data, user):
     try:
-        # Validate required user data
+        
         if not user or not all(key in user for key in ['id', 'name', 'location']):
             return {"message": "Missing required user information"}, 400
 
@@ -16,8 +16,7 @@ def add_schedule(data, user):
         if not pickup_date:
             return {"message": "Pickup date is required"}, 400
 
-        # Allocate pickup to an admin
-        admin_response = allocate_pickup(user)
+        admin_response = allocate_pickup(user.get('location'))
         if isinstance(admin_response, tuple):  # Check if it's an error response
             return admin_response  # Propagate the error
 
@@ -38,7 +37,7 @@ def add_schedule(data, user):
 
         # Add schedule to Firestore
         result = db.collection('waste_pickup').add(schedule_data)
-        doc_ref = result[0]  # DocumentReference object
+        doc_ref = result[1]
 
         return {"message": "Schedule added successfully", "id": doc_ref.id}, 200
 
@@ -56,9 +55,9 @@ def get_schedule(pickup_id):
     except Exception as e:
         return {"error": str(e)}, 500
     
-def allocate_pickup(user):
+def allocate_pickup(location):
     try:
-        location = user.get('location')
+        
         if not location:
             return {"message": "Location is required"}, 400
         
