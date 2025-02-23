@@ -39,7 +39,7 @@ def add_schedule(data, user):
         result = db.collection('waste_pickup').add(schedule_data)
         doc_ref = result[1]
 
-        return {"message": "Schedule added successfully", "id": doc_ref.id}, 200
+        return {"message": "Schedule added successfully", "pickup_id": doc_ref.id}, 200
 
     except Exception as e:
         return {"message": f"Failed to add schedule: {str(e)}"}, 500
