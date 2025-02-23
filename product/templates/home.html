@@ -1,36 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Flask Template</title>
+    
+    <style>
+      /* Global styles */
+      body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9fafb;
+      }
 
-  <title>Flask Template</title>
+      /* Hero Section */
+      .hero {
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4rem 0;
+      }
 
+      .hero-left {
+        width: 48%;
+      }
 
+      .hero-subheading {
+        font-size: 0.875rem;
+        color: #10b981; /* Tailwind's green-600 */
+        font-weight: 600;
+      }
+
+      .hero-heading {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-top: 1rem;
+        line-height: 1.2;
+      }
+
+      .hero-description {
+        color: #4b5563; /* Tailwind's gray-600 */
+        margin-top: 1rem;
+        font-size: 1.125rem;
+      }
+
+      .hero-btn {
+        margin-top: 1.5rem;
+        background-color: #047857; /* Tailwind's green-700 */
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .hero-btn:hover {
+        background-color: #065f46; /* Tailwind's green-800 */
+      }
+
+      .hero-right {
+        width: 48%;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .hero-image {
+        width: 400px;
+      }
+    </style>
   </head>
 
   <body>
-
     {% include 'navbar_public.html' %}
-
-    <main>
-
-      <h1>Home Page</h1>
-
-      <p>This is a public page that anyone can view.</p>
-      <p>Use this template to create and customize more public pages for your app.</p>
-
-    </main>
-
+    <!-- Hero Section -->
+    <section class="hero">
+      <!-- Left Content -->
+      <div class="hero-left">
+        <p class="hero-subheading">Top 1 in sustainable development</p>
+        <h1 class="hero-heading">
+          Lorem ipsum dolor sit amet et delectus accommodare his
+        </h1>
+        <p class="hero-description">
+          Lorem ipsum dolor sit amet et delectus accommodare his consul copiosae legendos at vix ad 
+          putent delectus delicata usu. Vidit dissentiunt eos cu eum an.
+        </p>
+        <button class="hero-btn">
+          Explore
+        </button>
+      </div>
+      <!-- Right Image -->
+      <div class="hero-right">
+        <img src="{{ url_for('static', filename='images/earth.png') }}" alt="Globe with green recycling arrows" class="hero-image">
+      </div>
+    </section>
     {% include 'footer.html' %}
-
-
-
-    <script src="{{ url_for('static', filename='scripts.js') }}" type="module"></script>
   </body>
-
 </html>
