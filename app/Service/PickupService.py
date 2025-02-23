@@ -1,6 +1,6 @@
 import firebase_admin
 from firebase_admin import credentials, firestore, initialize_app
-from .utils import currentTime as ct
+from app.utils import currentTime as ct
 from . import userService as us
 from app.config import cred
 
