@@ -16,16 +16,17 @@ def get_waste_pickup(pickup_id):
             data = pk.get_schedule(pickup_id)
             if isinstance(data, tuple):
                 return jsonify(data[0]), data[1]
-           # return jsonify(data)
-            return render_template('CollectorDashboard.html', data=data)
+            return jsonify(data)
+           # return render_template('CollectorDashboard.html', data=data)
         else:
             return jsonify({"error": "Unauthorized"}), 401
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-@waste_pickup.route('/pickupForm')
-def pickup_form():
-    return render_template('wastePickup.html')
+    
+# @waste_pickup.route('/pickupForm')
+# def pickup_form():
+#     return render_template('wastePickup.html')
 
 @waste_pickup.route('/addSchedule', methods=['POST'])
 def add_schedule_route():
@@ -48,13 +49,10 @@ def add_schedule_route():
             return jsonify({"error": "Unauthorized"}), 401
         
         success = pk.add_schedule(data, user)
-        if success:
-            
-            
-            return jsonify({"message": "Schedule added successfully"}), 200
+        if isinstance(success, tuple):
+            return jsonify(success[0]), success[1]
         
-        
-        return jsonify({"error": "Failed to add schedule"}), 500
+      
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
