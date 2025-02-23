@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" >
+    <title>Update Profile</title>
+</head>
+<body>
+    {% include 'navbar_private.html' %}
+    <h1>Update Profile</h1>
+    <form method="POST">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{{ user.get('username', '') }}" required>
+        </div>
+        <div>
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" value="{{ user.get('dob', '') }}" required>
+        </div>
+        <div>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" value="{{ user.get('location', '') }}" required>
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+    {% include 'footer.html' %}    
+</body>
+</html>
