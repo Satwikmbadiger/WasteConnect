@@ -1,12 +1,26 @@
 import firebase_admin
 from firebase_admin import credentials, auth,firestore
 from wastePickup.config import cred
+from . import PickupService as pk
 
 db = firestore.client()
 
 from flask import request, jsonify, current_app
 import firebase_admin
 from firebase_admin import auth, credentials
+
+def check_rewards(user):
+    try:
+     count=pk.count_pickup(user)
+     
+     if count/5==0:
+         return {"message":"You have earned a reward"}
+
+    except Exception as e:
+        return {"error": str(e)}, 500
+        
+        
+       
 
 def getUserByRole(role):
     try:
@@ -42,6 +56,7 @@ def verify_token_and_get_user():
         
          user_data = user_snapshot.to_dict()
          user_data['id'] = user_id
+         user_data['count']=0
         
          return user_data
         
@@ -51,3 +66,5 @@ def verify_token_and_get_user():
         return {'error': 'Expired token'}, 401
     except Exception as e:
         return {'error': str(e)}, 500
+    
+

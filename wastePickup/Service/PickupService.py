@@ -76,3 +76,12 @@ def allocate_pickup(location):
             
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}, 500
+    
+def count_pickup(user):
+    try:
+       if user.get('id')==db.collection("waste_pickup").get('uid') and db.collection("waste_pickup").get('status')=="completed":
+           user['count'] = user['count'] + 1
+           return user['count']
+                   
+    except Exception as e:
+        return {"message": f"Failed to retrieve pickup count: {str(e)}"}, 500
